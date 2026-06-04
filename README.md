@@ -6,10 +6,10 @@ Personal Hyprland rice with a Quickshell side dock/status panel, Eww desktop clo
 
 ## Showcase
 
-Local showcase video source:
+Video:
 
 ```text
-/home/noah/Videos/DAVINCI RESOLVE VIDEOS/Hyprland Rice Showcase/Hyprland Rice Showcase.mp4
+https://www.youtube.com/watch?v=laLx_CHMZrc
 ```
 
 For GitHub, upload that MP4 to a release, YouTube, or another host and replace this section with the public link.
