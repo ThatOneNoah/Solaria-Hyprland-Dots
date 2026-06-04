@@ -107,4 +107,3 @@ monitor = ,preferred,auto,1
 ```
 
 Edit `~/.config/hypr/hyprland.conf` for your real monitor names and refresh rates.
-

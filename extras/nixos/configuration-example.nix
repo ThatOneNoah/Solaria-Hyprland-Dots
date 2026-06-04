@@ -93,4 +93,3 @@ in
     ++ optionalKdePkg "kate"
     ++ optionalQt5Pkg "qtstyleplugin-kvantum";
 }
-
