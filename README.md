@@ -1,0 +1,53 @@
+# Noah's Hyprland Rice
+
+![Hyprland rice screenshot](assets/screenshot.png)
+
+Personal Hyprland rice with a Quickshell side dock/status panel, Eww desktop clock and control hub, Matugen wallpaper colors, Rofi launchers, Mako notifications, Wlogout/NWG session tools, Ghostty, and bundled wallpapers.
+
+## Showcase
+
+Local showcase video source:
+
+```text
+/home/noah/Videos/DAVINCI RESOLVE VIDEOS/Hyprland Rice Showcase/Hyprland Rice Showcase.mp4
+```
+
+For GitHub, upload that MP4 to a release, YouTube, or another host and replace this section with the public link.
+
+## Included
+
+- `dotfiles/.config/` includes Hyprland, Quickshell, Eww, Rofi, Mako, Wlogout, Ghostty, Fuzzel, Waybar, Matugen, GTK/Qt, Kvantum, Cava, Fastfetch, NWG, Cordial, Vencord/Vesktop theme files, and Spicetify files.
+- `dotfiles/.local/bin/` includes the launcher, wallpaper, Matugen, dock reload, and theme helper scripts used by the rice.
+- `dotfiles/.local/share/fonts/` includes the bundled Mojang/Mojangles-style fonts used by the clock and menus.
+- `wallpapers/` includes the wallpaper set from `~/Pictures/WALLPAPERS`.
+- `assets/screenshot.png` is the rice screenshot.
+
+## Install
+
+This installer is written for Arch-based Hyprland systems. It backs up replaced configs into `~/.rice-backups/noah-hyprland-rice-*`, copies wallpapers without overwriting existing wallpaper files, and rewrites repo placeholders to your `$HOME`.
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+Useful options:
+
+```bash
+./install.sh --no-packages
+./install.sh --packages --flatpaks -y
+./install.sh --no-wallpapers
+```
+
+After installing, log out and start Hyprland again, or run:
+
+```bash
+hyprctl reload
+```
+
+## Notes
+
+- The copied Hyprland config uses `monitor = ,preferred,auto,1` so it can boot on other machines. Noah's original monitor lines are left commented in `dotfiles/.config/hypr/hyprland.conf`.
+- The current wallpaper is set to `wallpapers/122440215_p0.png`.
+- `gpu-screen-recorder` replay buffer autostart is included as a commented optional line, not enabled by default.
+- Optional dock apps include Firefox, Steam, Vesktop/Vencord, Spotify, and Sober/Roblox. Install the apps you actually want.
