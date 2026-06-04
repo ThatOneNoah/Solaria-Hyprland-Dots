@@ -1,4 +1,4 @@
-# Noah's Hyprland Rice
+# SOLARIA ☀️
 
 ![Hyprland rice screenshot](assets/screenshot.png)
 
@@ -14,13 +14,12 @@ Supported install targets:
 
 ## Showcase
 
-Local showcase video source:
+Video:
 
 ```text
-/home/noah/Videos/DAVINCI RESOLVE VIDEOS/Hyprland Rice Showcase/Hyprland Rice Showcase.mp4
+https://www.youtube.com/watch?v=laLx_CHMZrc
 ```
 
-For GitHub, upload that MP4 to a release, YouTube, or another host and replace this section with the public link.
 
 ## Included
 
@@ -64,7 +63,7 @@ hyprctl reload
 
 ## Notes
 
-- The copied Hyprland config uses `monitor = ,preferred,auto,1` so it can boot on other machines. Noah's original monitor lines are left commented in `dotfiles/.config/hypr/hyprland.conf`.
+- The Hyprland config uses `monitor = ,preferred,auto,1` so it can boot on other machines. My original monitor lines are left commented in `dotfiles/.config/hypr/hyprland.conf`.
 - The current wallpaper is set to `wallpapers/122440215_p0.png`.
 - `gpu-screen-recorder` replay buffer autostart is included as a commented optional line, not enabled by default.
 - Optional dock apps include Firefox, Steam, Vesktop/Vencord, Spotify, and Sober/Roblox. Install the apps you actually want.
