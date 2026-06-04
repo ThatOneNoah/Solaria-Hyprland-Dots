@@ -23,6 +23,7 @@ PACMAN_PACKAGES=(
   hyprpaper
   waybar
   rofi-wayland
+  rofi
   mako
   ghostty
   kitty
@@ -82,13 +83,131 @@ FLATPAK_APPS=(
   org.vinegarhq.Sober
 )
 
+DEBIAN_PACKAGES=(
+  hyprland
+  hyprlock
+  hypridle
+  xdg-desktop-portal-hyprland
+  swww
+  waybar
+  rofi
+  mako-notifier
+  kitty
+  foot
+  fish
+  dolphin
+  kate
+  network-manager-gnome
+  blueman
+  bluez
+  power-profiles-daemon
+  pipewire
+  wireplumber
+  pipewire-pulse
+  pavucontrol
+  playerctl
+  brightnessctl
+  grim
+  slurp
+  wl-clipboard
+  libnotify-bin
+  jq
+  curl
+  imagemagick
+  file
+  fastfetch
+  cava
+  qt5ct
+  qt6ct
+  qt5-style-kvantum
+  qt6-style-kvantum
+  nwg-look
+  flatpak
+  fonts-noto-core
+  fonts-jetbrains-mono
+  fonts-inter
+)
+
+DEBIAN_MANUAL_PACKAGES=(
+  quickshell
+  eww
+  matugen
+  wlogout
+  nwg-bar
+  nwg-dock-hyprland
+  awww
+  gpu-screen-recorder
+  pywal16
+  pywalfox
+  ghostty
+)
+
+FEDORA_PACKAGES=(
+  hyprland
+  hyprlock
+  hypridle
+  xdg-desktop-portal-hyprland
+  swww
+  hyprpaper
+  waybar
+  rofi-wayland
+  mako
+  wlogout
+  ghostty
+  kitty
+  foot
+  fish
+  dolphin
+  kate
+  network-manager-applet
+  blueman
+  bluez
+  power-profiles-daemon
+  pipewire
+  wireplumber
+  pipewire-pulseaudio
+  pavucontrol
+  playerctl
+  brightnessctl
+  grim
+  slurp
+  wl-clipboard
+  libnotify
+  jq
+  curl
+  ImageMagick
+  file
+  fastfetch
+  cava
+  qt5ct
+  qt6ct
+  kvantum
+  nwg-look
+  flatpak
+  google-noto-sans-fonts
+  jetbrains-mono-fonts
+  rsms-inter-fonts
+)
+
+FEDORA_MANUAL_PACKAGES=(
+  quickshell
+  eww
+  matugen
+  nwg-bar
+  nwg-dock-hyprland
+  awww
+  gpu-screen-recorder
+  pywal16
+  pywalfox
+)
+
 usage() {
   cat <<'EOF'
 Usage: ./install.sh [options]
 
 Options:
   -y, --yes          Answer yes to installer prompts.
-  --packages         Install Arch/AUR packages without prompting.
+  --packages         Install distro packages without prompting.
   --no-packages      Skip package installation.
   --flatpaks         Install optional Flatpak apps without prompting.
   --no-flatpaks      Skip optional Flatpak apps.
@@ -103,6 +222,14 @@ log() {
 
 warn() {
   printf '[rice] warning: %s\n' "$*" >&2
+}
+
+run_root() {
+  if [[ "$EUID" -eq 0 ]]; then
+    "$@"
+  else
+    sudo "$@"
+  fi
 }
 
 ask_yes() {
@@ -134,10 +261,22 @@ ask_no() {
 }
 
 run_pacman() {
-  if [[ "$EUID" -eq 0 ]]; then
-    pacman "$@"
+  run_root pacman "$@"
+}
+
+distro_id() {
+  if [[ -r /etc/os-release ]]; then
+    . /etc/os-release
+    printf '%s\n' "${ID:-unknown}"
   else
-    sudo pacman "$@"
+    printf 'unknown\n'
+  fi
+}
+
+distro_like() {
+  if [[ -r /etc/os-release ]]; then
+    . /etc/os-release
+    printf '%s\n' "${ID_LIKE:-}"
   fi
 }
 
@@ -196,6 +335,87 @@ install_arch_packages() {
   if [[ "${#failed[@]}" -gt 0 ]]; then
     warn "$helper could not install: ${failed[*]}"
   fi
+}
+
+install_debian_packages() {
+  if ! command -v apt-get >/dev/null 2>&1; then
+    warn "apt-get was not found. Skipping Debian/Ubuntu package install."
+    return 0
+  fi
+
+  log "Installing apt packages. Missing or renamed packages will be reported and skipped."
+  run_root apt-get update || warn "apt-get update failed; continuing with package attempts."
+
+  local failed=()
+  local pkg
+  for pkg in "${DEBIAN_PACKAGES[@]}"; do
+    if dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q 'install ok installed'; then
+      continue
+    fi
+
+    if ! run_root env DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg"; then
+      failed+=("$pkg")
+    fi
+  done
+
+  if [[ "${#failed[@]}" -gt 0 ]]; then
+    warn "apt could not install: ${failed[*]}"
+  fi
+  warn "Debian/Ubuntu may need these installed from source, third-party repos, Flatpak, or Nix: ${DEBIAN_MANUAL_PACKAGES[*]}"
+}
+
+install_fedora_packages() {
+  if ! command -v dnf >/dev/null 2>&1; then
+    warn "dnf was not found. Skipping Fedora package install."
+    return 0
+  fi
+
+  log "Installing dnf packages. Missing or renamed packages will be reported and skipped."
+  local failed=()
+  local pkg
+  for pkg in "${FEDORA_PACKAGES[@]}"; do
+    if rpm -q "$pkg" >/dev/null 2>&1; then
+      continue
+    fi
+
+    if ! run_root dnf install -y "$pkg"; then
+      failed+=("$pkg")
+    fi
+  done
+
+  if [[ "${#failed[@]}" -gt 0 ]]; then
+    warn "dnf could not install: ${failed[*]}"
+  fi
+  warn "Fedora may need these installed from source, COPR, Flatpak, or Nix: ${FEDORA_MANUAL_PACKAGES[*]}"
+}
+
+install_nixos_packages() {
+  warn "NixOS package installation is declarative; this script will not edit /etc/nixos/configuration.nix."
+  warn "Use extras/nixos/configuration-example.nix, then run ./install.sh --no-packages to copy the dotfiles."
+}
+
+install_distro_packages() {
+  local id like
+  id="$(distro_id)"
+  like="$(distro_like)"
+
+  case "$id:$like" in
+    arch:*|endeavouros:*|manjaro:*)
+      install_arch_packages
+      ;;
+    debian:*|ubuntu:*|pop:*|linuxmint:*|*:debian*|*:ubuntu*)
+      install_debian_packages
+      ;;
+    fedora:*|nobara:*|*:fedora*)
+      install_fedora_packages
+      ;;
+    nixos:*)
+      install_nixos_packages
+      ;;
+    *)
+      warn "Unsupported distro '$id'. Copying dotfiles still works; install packages manually from docs/DISTROS.md."
+      ;;
+  esac
 }
 
 install_flatpaks() {
@@ -362,11 +582,11 @@ done
 
 case "$INSTALL_PACKAGES" in
   yes)
-    install_arch_packages
+    install_distro_packages
     ;;
   ask)
-    if ask_yes "Install Arch/AUR packages for the rice?"; then
-      install_arch_packages
+    if ask_yes "Install distro packages for the rice?"; then
+      install_distro_packages
     fi
     ;;
 esac

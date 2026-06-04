@@ -4,6 +4,14 @@
 
 Personal Hyprland rice with a Quickshell side dock/status panel, Eww desktop clock and control hub, Matugen wallpaper colors, Rofi launchers, Mako notifications, Wlogout/NWG session tools, Ghostty, and bundled wallpapers.
 
+Supported install targets:
+
+- Arch Linux
+- Debian
+- Ubuntu
+- Fedora
+- NixOS
+
 ## Showcase
 
 Local showcase video source:
@@ -24,12 +32,19 @@ For GitHub, upload that MP4 to a release, YouTube, or another host and replace t
 
 ## Install
 
-This installer is written for Arch-based Hyprland systems. It backs up replaced configs into `~/.rice-backups/noah-hyprland-rice-*`, copies wallpapers without overwriting existing wallpaper files, and rewrites repo placeholders to your `$HOME`.
+The installer backs up replaced configs into `~/.rice-backups/noah-hyprland-rice-*`, copies wallpapers without overwriting existing wallpaper files, and rewrites repo placeholders to your `$HOME`.
 
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
+
+Package installation is distro-aware:
+
+- Arch uses `pacman`, plus `yay` or `paru` for AUR packages.
+- Debian and Ubuntu use `apt-get` for packages available in their repos.
+- Fedora uses `dnf`.
+- NixOS users should add `extras/nixos/configuration-example.nix` to their NixOS imports, rebuild, then run `./install.sh --no-packages`.
 
 Useful options:
 
@@ -38,6 +53,8 @@ Useful options:
 ./install.sh --packages --flatpaks -y
 ./install.sh --no-wallpapers
 ```
+
+Detailed distro notes are in [docs/DISTROS.md](docs/DISTROS.md).
 
 After installing, log out and start Hyprland again, or run:
 
