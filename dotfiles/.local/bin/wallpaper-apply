@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WALL="${1:-}"
+if [[ -z "$WALL" || ! -f "$WALL" ]]; then
+  echo "Usage: wallpaper-apply /path/to/wallpaper.png"
+  exit 1
+fi
+
+# 1) ensure swww daemon
+pgrep -x swww-daemon >/dev/null || (swww-daemon & sleep 0.2)
+
+# 2) set wallpaper
+swww img "$WALL" --transition-type any
+
+# 3) generate themes
+matugen image "$WALL" -c "$HOME/.config/matugen/config.toml"
+
+# 4) reload apps (some need restart)
+# Hyprland: reload config (for matugen.conf etc.)
+hyprctl reload >/dev/null 2>&1 || true
+
+# Waybar: most setups need a restart to re-read css
+pkill -x waybar 2>/dev/null || true
+(waybar >/dev/null 2>&1 &) || true
+
+# nwg-dock-hyprland: DOES NOT reliably hot-reload CSS -> restart it
+pkill -f "nwg-dock-hyprland" 2>/dev/null || true
+sleep 0.1
+(nwg-dock-hyprland -x -p bottom -i 22 -mt 0 -mb 12 -ml 0 >/dev/null 2>&1 &) || true
+
+# rofi: no daemon to reload. It will use new colors next time you launch it.
+exit 0

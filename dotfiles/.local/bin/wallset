@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WALL="${1:-}"
+if [[ -z "$WALL" || ! -f "$WALL" ]]; then
+  echo "Usage: wallset /full/path/to/wallpaper"
+  exit 1
+fi
+
+# 1) Set wallpaper
+swww img "$WALL" --transition-type any --transition-fps 60 --transition-duration 0.6
+
+# 2) Run pywal (THIS is what updates ~/.cache/wal/colors.json)
+# Use ONE of these, depending on what you actually have:
+if command -v wal16 >/dev/null 2>&1; then
+  wal16 -i "$WALL"
+else
+  wal -i "$WALL"
+fi
+
+# 3) Generate waybar css from pywal colors.json (transparent bg + colored outline)
+python - <<'PY'
+import json, os
+home = os.path.expanduser("~")
+j = json.load(open(os.path.join(home, ".cache/wal/colors.json")))
+
+bg = j["special"]["background"].lstrip("#")          # wallpaper bg
+fg = j["special"]["foreground"]                      # text
+accent = j["colors"]["color4"].lstrip("#")           # outline color (change if you want)
+
+def rgba(hex6, a):
+    r = int(hex6[0:2], 16); g = int(hex6[2:4], 16); b = int(hex6[4:6], 16)
+    return f"rgba({r}, {g}, {b}, {a})"
+
+out = os.path.join(home, ".cache/wal/waybar-wal.css")
+os.makedirs(os.path.dirname(out), exist_ok=True)
+
+with open(out, "w") as f:
+    # transparent background and strong outline
+    f.write(f'@define-color wb_bg {rgba(bg, 0.45)};\n')       # <-- transparency here
+    f.write(f'@define-color wb_border {rgba(accent, 0.95)};\n')
+    f.write(f'@define-color wb_fg {fg};\n')
+PY
+
+# 4) Restart waybar so it actually reads the new CSS
+pkill waybar || true
+nohup waybar >/dev/null 2>&1 &

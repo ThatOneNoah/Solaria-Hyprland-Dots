@@ -1,0 +1,13 @@
+/* Colors for nwg-dock-hyprland from pywal16 */
+
+/* Dock background: use a dark palette color, semi-transparent */
+@define-color wal_dock_bg     rgba({color0.rgb}, 0.65);
+
+/* Dock outline: a brighter accent color, mostly solid */
+@define-color wal_dock_border rgba({color4.rgb}, 0.95);
+
+/* Icon / text color */
+@define-color wal_dock_fg     {foreground.rgba};
+
+/* Active indicator color */
+@define-color wal_dock_active {color5.rgba};

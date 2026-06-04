@@ -1,0 +1,15 @@
+/* cordial-name: Mono */
+:root {
+  --cordial-theme: mono;
+  --background: #090909;
+  --surface: #151515;
+  --surface-raised: #222222;
+  --surface-hover: #303030;
+  --border: #464646;
+  --text: #f4f4f1;
+  --muted: #aaa9a3;
+  --accent: #d8d2bd;
+  --accent-strong: #e38b75;
+  --accent-soft: #c7b97f;
+  --shadow: rgba(0, 0, 0, 0.44);
+}

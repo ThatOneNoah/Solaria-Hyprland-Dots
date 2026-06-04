@@ -1,0 +1,23 @@
+configuration {
+  /* Enable two modes: Applications (drun) + Wallpapers (script mode) */
+  modes: "drun,wallpapers:__HOME__/.local/bin/rofi-wallpapers";
+
+  /* Makes the enabled modes list appear at the bottom (clickable) */
+  sidebar-mode: true;
+
+  /* UX */
+  show-icons: true;
+  click-to-exit: true;
+
+  /* Font (also set in theme for reliability) */
+  font: "Mojangles 11";
+
+  /* Mode labels */
+  display-drun: "Applications";
+  display-wallpapers: "Wallpapers";
+
+  /* Applications */
+  drun-display-format: "{name}";
+}
+
+@theme "__HOME__/.config/rofi/theme.rasi"

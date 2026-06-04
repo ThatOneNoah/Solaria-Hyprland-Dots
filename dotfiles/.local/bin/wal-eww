@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+JSON="$HOME/.cache/wal/colors.json"
+OUT="$HOME/.cache/wal/eww-wal.scss"
+
+if [[ ! -f "$JSON" ]]; then
+  echo "Missing $JSON. Run wal/wal16 once first."
+  exit 1
+fi
+
+python - <<'PY'
+import json, os
+home = os.path.expanduser("~")
+j = json.load(open(os.path.join(home, ".cache/wal/colors.json")))
+
+bg = j["special"]["background"]  # "#RRGGBB"
+fg = j["special"]["foreground"]
+accent = j["colors"]["color4"]
+border = j["colors"]["color6"]
+urgent = j["colors"]["color1"]
+dim = j["colors"]["color8"]
+
+def rgba(hexcolor, a):
+    h = hexcolor.lstrip("#")
+    r = int(h[0:2], 16); g = int(h[2:4], 16); b = int(h[4:6], 16)
+    return f"rgba({r},{g},{b},{a})"
+
+out = os.path.join(home, ".cache/wal/eww-wal.scss")
+os.makedirs(os.path.dirname(out), exist_ok=True)
+
+with open(out, "w") as f:
+    f.write("// Auto-generated from pywal\n")
+    f.write(f"$wal_bg: {bg};\n")
+    f.write(f"$wal_fg: {fg};\n")
+    f.write(f"$wal_accent: {accent};\n")
+    f.write(f"$wal_border: {border};\n")
+    f.write(f"$wal_urgent: {urgent};\n")
+    f.write(f"$wal_dim: {dim};\n\n")
+
+    # widget styling vars (tweak alphas here)
+    f.write(f"$widget_bg: {rgba(bg, 0.80)};\n")       # <- background transparency
+    f.write(f"$widget_border: {rgba(accent, 0.95)};\n")
+PY
+
+echo "Wrote $OUT"
+
+~/.local/bin/wal-eww
+eww reload
+eww open music

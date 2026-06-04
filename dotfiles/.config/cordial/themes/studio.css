@@ -1,0 +1,15 @@
+/* cordial-name: Studio */
+:root {
+  --cordial-theme: studio;
+  --background: #0b0d0c;
+  --surface: #151916;
+  --surface-raised: #202720;
+  --surface-hover: #2c342e;
+  --border: #3d4941;
+  --text: #f2f5ef;
+  --muted: #a2ada4;
+  --accent: #b5c99a;
+  --accent-strong: #e78b75;
+  --accent-soft: #dec76c;
+  --shadow: rgba(0, 0, 0, 0.36);
+}

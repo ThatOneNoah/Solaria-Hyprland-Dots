@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+rofi -show drun \
+  -modi "drun,wallpapers:$HOME/.local/bin/rofi-wallpapers" \
+  -theme "$HOME/.config/rofi/config.rasi"

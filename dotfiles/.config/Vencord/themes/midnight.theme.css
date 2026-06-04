@@ -1,0 +1,144 @@
+/**
+ * @name midnight-matugen
+ * @description Midnight Discord theme + wallpaper colors from matugen
+ * @author you
+ * @version 1.0.0
+ */
+
+/* Load Midnight base theme */
+@import url('https://refact0r.github.io/midnight-discord/build/midnight.css');
+
+body {
+    /* keep Midnight vibe/options */
+    --font: 'figtree';
+    --gap: 12px;
+    --divider-thickness: 4px;
+
+    --animations: on;
+    --list-item-transition: 0.2s ease;
+    --dms-icon-svg-transition: 0.4s ease;
+
+    --move-top-bar-buttons: off;
+    --custom-app-top-bar-height: 32px;
+
+    --custom-window-controls: on;
+    --window-control-size: 14px;
+
+    --dms-icon: on;
+    --dms-icon-svg-url: url('https://upload.wikimedia.org/wikipedia/commons/c/c4/Font_Awesome_5_solid_moon.svg');
+    --dms-icon-svg-size: 90%;
+    --dms-icon-color-before: var(--icon-secondary);
+    --dms-icon-color-after: var(--white);
+
+    --dms-background: off;
+    --dms-background-image-url: url('');
+    --dms-background-image-size: cover;
+    --dms-background-color: linear-gradient(70deg, var(--blue-2), var(--purple-2), var(--red-2));
+
+    --background-image: off;
+    --background-image-url: url('');
+
+    --transparency-tweaks: off;
+    --remove-bg-layer: off;
+    --panel-blur: off;
+    --blur-amount: 12px;
+    --bg-floating: var(--bg-3);
+
+    --small-user-panel: off;
+}
+
+:root {
+    --colors: on;
+
+    /* text */
+    --text-0: @{surface};              /* text on colored elements */
+    --text-1: @{on_surface};           /* primary text */
+    --text-2: @{on_surface_variant};   /* headings */
+    --text-3: @{outline};              /* normal muted text */
+    --text-4: @{outline_variant};      /* icons/channels */
+    --text-5: @{surface_variant};      /* timestamps */
+
+    /* backgrounds */
+    --bg-1: @{surface_container_high};     /* clicked dark buttons */
+    --bg-2: @{surface_container};          /* dark buttons */
+    --bg-3: @{surface_container_low};      /* spacing/secondary */
+    --bg-4: @{surface};                    /* main background */
+
+    /* interaction */
+    --hover: color-mix(in srgb, @{primary} 12%, transparent);
+    --active: color-mix(in srgb, @{primary} 20%, transparent);
+    --active-2: color-mix(in srgb, @{primary} 30%, transparent);
+    --message-hover: color-mix(in srgb, @{on_surface} 7%, transparent);
+
+    /* accents */
+    --accent-1: @{primary};
+    --accent-2: @{secondary};
+    --accent-3: @{tertiary};
+    --accent-4: color-mix(in srgb, @{tertiary} 85%, black);
+    --accent-5: color-mix(in srgb, @{tertiary} 70%, black);
+    --accent-new: @{error};
+
+    --mention: linear-gradient(
+        to right,
+        color-mix(in srgb, @{primary} 16%, transparent) 40%,
+                               transparent
+    );
+    --mention-hover: linear-gradient(
+        to right,
+        color-mix(in srgb, @{primary} 22%, transparent) 40%,
+                                     transparent
+    );
+    --reply: linear-gradient(
+        to right,
+        color-mix(in srgb, @{on_surface_variant} 14%, transparent) 40%,
+                             transparent
+    );
+    --reply-hover: linear-gradient(
+        to right,
+        color-mix(in srgb, @{on_surface_variant} 20%, transparent) 40%,
+                                   transparent
+    );
+
+    /* status colors */
+    --online: @{green};
+    --dnd: @{error};
+    --idle: @{yellow};
+    --streaming: @{purple};
+    --offline: @{outline_variant};
+
+    /* borders */
+    --border-light: color-mix(in srgb, @{outline} 25%, transparent);
+    --border: color-mix(in srgb, @{outline} 45%, transparent);
+    --button-border: color-mix(in srgb, @{on_surface} 12%, transparent);
+
+    /* base ramps (Midnight uses these a lot) */
+    --red-1: color-mix(in srgb, @{error} 80%, white);
+    --red-2: @{error};
+    --red-3: color-mix(in srgb, @{error} 88%, black);
+    --red-4: color-mix(in srgb, @{error} 76%, black);
+    --red-5: color-mix(in srgb, @{error} 64%, black);
+
+    --green-1: color-mix(in srgb, @{green} 80%, white);
+    --green-2: @{green};
+    --green-3: color-mix(in srgb, @{green} 88%, black);
+    --green-4: color-mix(in srgb, @{green} 76%, black);
+    --green-5: color-mix(in srgb, @{green} 64%, black);
+
+    --blue-1: color-mix(in srgb, @{primary} 80%, white);
+    --blue-2: @{primary};
+    --blue-3: color-mix(in srgb, @{primary} 88%, black);
+    --blue-4: color-mix(in srgb, @{primary} 76%, black);
+    --blue-5: color-mix(in srgb, @{primary} 64%, black);
+
+    --yellow-1: color-mix(in srgb, @{yellow} 80%, white);
+    --yellow-2: @{yellow};
+    --yellow-3: color-mix(in srgb, @{yellow} 88%, black);
+    --yellow-4: color-mix(in srgb, @{yellow} 76%, black);
+    --yellow-5: color-mix(in srgb, @{yellow} 64%, black);
+
+    --purple-1: color-mix(in srgb, @{purple} 80%, white);
+    --purple-2: @{purple};
+    --purple-3: color-mix(in srgb, @{purple} 88%, black);
+    --purple-4: color-mix(in srgb, @{purple} 76%, black);
+    --purple-5: color-mix(in srgb, @{purple} 64%, black);
+}

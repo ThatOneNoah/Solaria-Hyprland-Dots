@@ -1,0 +1,15 @@
+/* cordial-name: Lagoon */
+:root {
+  --cordial-theme: lagoon;
+  --background: #071012;
+  --surface: #101c20;
+  --surface-raised: #19292f;
+  --surface-hover: #243940;
+  --border: #34515a;
+  --text: #eef6f4;
+  --muted: #98adb0;
+  --accent: #78d3bd;
+  --accent-strong: #f08f73;
+  --accent-soft: #e6c66c;
+  --shadow: rgba(0, 0, 0, 0.42);
+}

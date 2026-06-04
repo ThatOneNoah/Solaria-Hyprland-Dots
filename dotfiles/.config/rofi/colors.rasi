@@ -1,0 +1,13 @@
+* {
+bg: #0f1417;
+bg-alt: #41484d;
+bg-hover: #4f585e;
+surface: #1c2023;
+surface2: #262b2e;
+fg: #dfe3e7;
+fg-muted: #8a9297;
+muted: #8a9297;
+accent: #8fcff3;
+accent-fg: #003549;
+border: #8a9297;
+}

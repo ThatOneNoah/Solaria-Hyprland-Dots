@@ -1,0 +1,43 @@
+{
+  "commands": [
+    {
+      "name": "lock",
+      "label": "Lock",
+      "exec": "__HOME__/.config/hypr/scripts/hyprlock-swww.sh",
+      "icon": "system-lock-screen"
+    },
+    {
+      "name": "logout",
+      "label": "Logout",
+      "exec": "hyprctl dispatch exit",
+      "icon": "system-log-out"
+    },
+    {
+      "name": "suspend",
+      "label": "Suspend",
+      "exec": "systemctl suspend",
+      "icon": "system-suspend"
+    },
+    {
+      "name": "hibernate",
+      "label": "Hibernate",
+      "exec": "systemctl hibernate",
+      "icon": "system-hibernate"
+    },
+    {
+      "name": "reboot",
+      "label": "Reboot",
+      "exec": "systemctl reboot",
+      "icon": "system-reboot"
+    },
+    {
+      "name": "shutdown",
+      "label": "Shutdown",
+      "exec": "systemctl poweroff",
+      "icon": "system-shutdown"
+    }
+  ],
+  "columns": 3,
+  "outer_margin": 120,
+  "inner_margin": 24
+}

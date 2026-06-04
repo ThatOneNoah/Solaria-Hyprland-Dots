@@ -1,0 +1,107 @@
+(defpoll clock_time :interval "1s" "date +'%I:%M %p'")
+(defpoll clock_date :interval "30s" "date +'%A, %B %-d'")
+(defpoll hub_time :interval "1s" "date +'%I:%M:%S %p'")
+(defpoll weather_zip :interval "5s" "~/.config/eww/scripts/weather_zip.sh")
+(defpoll weather_icon :interval "10m" "~/.config/eww/scripts/weather.sh icon")
+(defpoll weather_temp :interval "10m" "~/.config/eww/scripts/weather.sh temp")
+(defpoll weather_desc :interval "10m" "~/.config/eww/scripts/weather.sh desc")
+(defpoll sysinfo :interval "30s" "~/.config/eww/scripts/sysinfo.sh")
+(defpoll title :interval "1s" :initial "No music" "~/.config/eww/scripts/now_title.sh")
+(defpoll artist :interval "1s" :initial "" "~/.config/eww/scripts/now_artist.sh")
+(defpoll prog :interval "1s" :initial "0" "~/.config/eww/scripts/progress_percent.sh")
+(defpoll progtxt :interval "1s" :initial "0:00 / 0:00" "~/.config/eww/scripts/progress_time.sh")
+(defpoll coverpath :interval "2s" :initial "__HOME__/.config/eww/empty-cover.png" "~/.config/eww/scripts/cover_path.sh")
+(defpoll playicon :interval "1s" :initial "" "~/.config/eww/scripts/play_icon.sh")
+(defvar emptycover "__HOME__/.config/eww/empty-cover.png")
+(defvar hub_hovered false)
+
+(defwidget desktop_clock []
+  (box :class "desktop-clock" :orientation "v" :space-evenly false
+    (label :class "desktop-time" :text clock_time)
+    (label :class "desktop-date" :text clock_date)))
+
+(defwidget media_card []
+  (box :class "hub-section media-card" :space-evenly false
+    (overlay :class "coverwrap" :width 380 :height 380 :valign "start"
+      (label :class "coverfallback" :text "♪" :halign "center" :valign "center")
+      (image :class "cover" :path coverpath :visible {coverpath != emptycover} :image-width 380 :image-height 380))
+    (box :class "media-main" :orientation "v" :space-evenly false
+      (label :class "section-kicker" :text "Now Playing")
+      (label :class "media-title" :text title :limit-width 34)
+      (label :class "media-artist" :text artist :limit-width 34)
+      (box :class "seekrow"
+        (scale :class "seek" :min 0 :max 100 :value prog :onchange "playerctl position {}%")
+        (label :class "media-time" :text progtxt))
+      (box :class "controls" :space-evenly false
+        (button :class "control-btn" :onclick "playerctl previous" :tooltip "Previous"
+          (label :class "control-icon" :text ""))
+        (button :class "control-btn control-main" :onclick "playerctl play-pause" :tooltip "Play/Pause"
+          (label :class "control-icon" :text playicon))
+        (button :class "control-btn" :onclick "playerctl next" :tooltip "Next"
+          (label :class "control-icon" :text ""))))))
+
+(defwidget weather_card []
+  (box :class "hub-section weather-card" :orientation "v" :space-evenly false
+    (box :space-evenly false
+      (label :class "weather-icon" :text weather_icon)
+      (box :orientation "v" :space-evenly false
+        (label :class "weather-temp" :text weather_temp)
+        (label :class "weather-desc" :text weather_desc :limit-width 20)))
+    (box :class "zip-row" :space-evenly false
+      (label :class "zip-label" :text "ZIP")
+      (input :class "zip-input" :value weather_zip :onchange "~/.config/eww/scripts/set_weather_zip.sh {}"))))
+
+(defwidget profile_card []
+  (box :class "hub-section profile-card" :orientation "v" :space-evenly false
+    (label :class "section-kicker" :text "Profile")
+    (label :class "profile-name" :text "noah")
+    (label :class "profile-info" :text sysinfo)))
+
+(defwidget control_hub []
+  (eventbox :onhover "eww update hub_hovered=true"
+            :onhoverlost "~/.config/eww/scripts/control_hub.sh close-if-hovered"
+    (box :class "hub-shell" :orientation "v" :space-evenly false
+      (box :class "hover-bridge")
+      (box :class "hub" :orientation "v" :space-evenly false
+        (box :class "hub-header" :space-evenly false
+          (label :class "hub-title" :text "Control")
+          (box :hexpand true)
+          (label :class "hub-clock" :text hub_time))
+        (box :class "hub-grid" :space-evenly false
+          (media_card)
+          (box :class "hub-side" :orientation "v" :space-evenly false
+            (weather_card)
+            (profile_card)))
+        (box :class "hub-bottom" :space-evenly false
+          (calendar :class "hub-calendar")
+          (box :class "hint-panel" :orientation "v" :space-evenly false
+            (box :class "hint-copy" :orientation "v" :space-evenly false
+              (label :class "section-kicker" :text "Session")
+              (label :class "hint-line" :text "Hover the top tab to show this hub." :limit-width 22)
+              (label :class "hint-line" :text "Right click the tab to close it." :limit-width 22))))))))
+
+(defwindow desktop_time
+  :monitor 0
+  :stacking "bg"
+  :exclusive false
+  :focusable false
+  :geometry (geometry
+              :anchor "center"
+              :x "0"
+              :y "0"
+              :width "520"
+              :height "170")
+  (desktop_clock))
+
+(defwindow control_hub
+  :monitor 0
+  :stacking "fg"
+  :exclusive false
+  :focusable true
+  :geometry (geometry
+              :anchor "top center"
+              :x "0"
+              :y "0"
+              :width "1220"
+              :height "800")
+  (control_hub))

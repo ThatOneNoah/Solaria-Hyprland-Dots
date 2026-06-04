@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WALL_DIR="$HOME/Pictures/WALLPAPERS"
+APPLY_SCRIPT="$HOME/.local/bin/apply-wallpaper-matugen"
+
+# Build list of wallpapers
+mapfile -t WALLS < <(find "$WALL_DIR" -maxdepth 2 -type f \
+  \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' \) | sort)
+
+if [ "${#WALLS[@]}" -eq 0 ]; then
+  echo "No wallpapers found in $WALL_DIR"
+  exit 1
+fi
+
+case "${ROFI_RETV:-0}" in
+  0)
+    # First call: print entries with icon metadata
+    for w in "${WALLS[@]}"; do
+      label="${w#"$WALL_DIR"/}"
+      printf '%s\0icon\x1f%s\x1finfo\x1f%s\n' "$label" "$w" "$w"
+    done
+    ;;
+  1)
+    # Second call: user selected one entry (by label)
+    CHOICE="${ROFI_INFO:-${1:-}}"
+    SELECTED=""
+
+    for w in "${WALLS[@]}"; do
+      if [ "$w" = "$CHOICE" ] || [ "${w#"$WALL_DIR"/}" = "$CHOICE" ]; then
+        SELECTED="$w"
+        break
+      fi
+    done
+
+    [ -z "$SELECTED" ] && exit 1
+
+    if [ -x "$APPLY_SCRIPT" ]; then
+      nohup "$APPLY_SCRIPT" "$SELECTED" >/dev/null 2>&1 &
+    else
+      notify-send "Wallpaper failed" "$APPLY_SCRIPT is missing or not executable" 2>/dev/null || true
+      exit 1
+    fi
+    ;;
+esac
+
+exit 0

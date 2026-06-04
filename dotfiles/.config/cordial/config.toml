@@ -1,0 +1,10 @@
+# Cordial app config.
+# This app intentionally does not accept Discord user tokens.
+# Future official API support should use Discord OAuth2 or a bot token only.
+
+[privacy]
+telemetry = false
+persist_message_cache = false
+
+[discord]
+mode = "offline-preview"

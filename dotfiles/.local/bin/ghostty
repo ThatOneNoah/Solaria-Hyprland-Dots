@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Pass through Ghostty +actions unchanged
+if [[ "${1:-}" == +* ]]; then
+  exec /usr/bin/ghostty "$@"
+fi
+
+# If user specified -e, respect it
+for arg in "$@"; do
+  if [[ "$arg" == "-e" ]]; then
+    exec /usr/bin/ghostty "$@"
+  fi
+done
+
+# Default: fish login shell
+exec env HOME="__HOME__" XDG_CONFIG_HOME="__HOME__/.config" /usr/bin/ghostty -e /usr/bin/fish -l

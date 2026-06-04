@@ -1,0 +1,19 @@
+/* GTK from pywal16 */
+
+@define-color bg_color {background};
+@define-color fg_color {foreground};
+@define-color accent_color {color4};
+
+window, dialog, .background {
+    background-color: @bg_color;
+    color: @fg_color;
+}
+
+button, entry, combobox, textview {
+    background-color: shade(@bg_color, 1.05);
+    color: @fg_color;
+}
+
+button:focus, entry:focus {
+    border-color: @accent_color;
+}

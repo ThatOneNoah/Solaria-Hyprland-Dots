@@ -1,0 +1,15 @@
+/* cordial-name: Ember */
+:root {
+  --cordial-theme: ember;
+  --background: #100d0b;
+  --surface: #1b1713;
+  --surface-raised: #282019;
+  --surface-hover: #382b21;
+  --border: #514237;
+  --text: #f6f1ea;
+  --muted: #b2a69a;
+  --accent: #f1b36d;
+  --accent-strong: #e16f5f;
+  --accent-soft: #95c49a;
+  --shadow: rgba(0, 0, 0, 0.4);
+}

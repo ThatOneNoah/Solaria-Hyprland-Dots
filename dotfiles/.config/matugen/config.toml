@@ -1,0 +1,33 @@
+[config]
+
+[templates.rofi]
+input_path  = "__HOME__/.config/matugen/templates/rofi-colors.rasi.tpl"
+output_path = "__HOME__/.config/rofi/colors.rasi"
+
+[templates.quickshell]
+input_path  = "__HOME__/.config/matugen/templates/quickshell-Theme.qml.tpl"
+output_path = "__HOME__/.config/quickshell/Theme.qml"
+
+[templates.eww]
+input_path  = "__HOME__/.config/matugen/templates/eww-colors.scss.tpl"
+output_path = "__HOME__/.config/eww/colors.scss"
+
+[templates.mako]
+input_path  = "__HOME__/.config/matugen/templates/mako-config.tpl"
+output_path = "__HOME__/.config/mako/config"
+
+[templates.nwg_dock]
+input_path  = "__HOME__/.config/matugen/templates/nwg-dock-colors.css.tpl"
+output_path = "__HOME__/.config/nwg-dock-hyprland/colors.css"
+
+[templates.vencord_midnight]
+input_path  = "__HOME__/.config/matugen/templates/midnight-matugen.theme.css.tpl"
+output_path = "__HOME__/.config/Vencord/themes/midnight-matugen.theme.css"
+
+[templates.pywalfox]
+input_path  = "__HOME__/.config/matugen/templates/pywal-colors.json.tpl"
+output_path = "__HOME__/.cache/wal/colors.json"
+
+[templates.ghostty]
+input_path  = "__HOME__/.config/matugen/templates/ghostty-colors.conf.tpl"
+output_path = "__HOME__/.config/ghostty/matugen-colors.conf"

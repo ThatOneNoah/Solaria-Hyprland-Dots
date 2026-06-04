@@ -1,0 +1,19 @@
+/* matugen -> gtk colors */
+@define-color accent_color #ffb3af;
+@define-color accent_bg_color #ffb3af;
+@define-color accent_fg_color #571d1c;
+
+@define-color window_bg_color #1a1111;
+@define-color window_fg_color #f1dedd;
+@define-color view_bg_color #1a1111;
+@define-color view_fg_color #f1dedd;
+
+@define-color headerbar_bg_color #1a1111;
+@define-color headerbar_fg_color #f1dedd;
+@define-color headerbar_border_color #a08c8b;
+
+@define-color popover_bg_color #1a1111;
+@define-color popover_fg_color #f1dedd;
+
+@define-color card_bg_color #1a1111;
+@define-color card_fg_color #f1dedd;

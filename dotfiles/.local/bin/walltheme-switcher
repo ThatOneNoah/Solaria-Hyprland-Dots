@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WALL_DIR="__HOME__/Pictures/WALLPAPERS"
+THUMB_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/walls/thumbs"
+mkdir -p "$THUMB_DIR"
+
+# Create/return a thumbnail for rofi icons (fast subsequent loads)
+thumb_for() {
+  local img="$1"
+  local base; base="$(basename "$img")"
+  local out="$THUMB_DIR/${base%.*}.png"
+  if [[ ! -f "$out" || "$img" -nt "$out" ]]; then
+    magick "$img" -thumbnail 512x288^ -gravity center -extent 512x288 "$out"
+  fi
+  printf '%s' "$out"
+}
+
+# ROFI script mode contract:
+# ROFI_RETV=0 -> print choices
+# ROFI_RETV=1 -> handle selection
+
+if [[ "${ROFI_RETV:-0}" -eq 0 ]]; then
+  shopt -s nullglob
+  for img in "$WALL_DIR"/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}; do
+    name="$(basename "$img")"
+    icon="$(thumb_for "$img")"
+    # line format: label \0icon\x1fICON \0info\x1fPAYLOAD \n
+    printf '%s\0icon\x1f%s\0info\x1f%s\n' "$name" "$icon" "$img"
+  done | sort -f
+  exit 0
+fi
+
+# On submit: $ROFI_INFO carries our payload
+IMG="${ROFI_INFO:-}"
+[[ -n "$IMG" && -f "$IMG" ]] || exit 1
+
+# 1) set wallpaper
+swww img "$IMG" --transition-type grow --transition-duration 0.65
+
+# 2) generate colors (no reload of terminal palettes)
+wal -n -i "$IMG"
+
+# 3) rebuild our template-driven color files (pywal did this already)
+#    Just ensure all apps re-pull them:
+
+# Waybar: reload CSS
+pkill -USR2 waybar 2>/dev/null || true
+
+# Rofi: nothing to kill; rofi reads the .rasi every launch
+
+# Wofi: restart only if running (SIGUSR1 reloads style)
+pkill -USR1 wofi 2>/dev/null || true
+
+# GTK (optional, see step 5 below)
+if command -v wal-gtk-theme >/dev/null 2>&1; then
+  # Uncomment the next line once wal-gtk is installed and themed once.
+  # wal-gtk-theme -a >/dev/null 2>&1 || true
+  :
+fi
+
+notify-send "Theme applied" "$(basename "$IMG")" -i "$(thumb_for "$IMG")" 2>/dev/null || true

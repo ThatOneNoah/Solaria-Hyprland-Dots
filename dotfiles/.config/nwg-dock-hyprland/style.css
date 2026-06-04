@@ -1,0 +1,55 @@
+@import url("colors.css");
+/* ~/.config/nwg-dock-hyprland/style.css */
+
+window {
+  background: alpha(@bgBar, 0.92);
+  border-radius: 16px;
+  border: 1px solid alpha(@border, 0.95);
+  box-shadow: none;
+}
+
+#box {
+padding: 6px 8px;
+}
+
+#active {
+border-bottom: 2px solid alpha(@bgActive, 0.95);
+border-radius: 8px;
+}
+
+button,
+image {
+  background: none;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  color: @fg;
+}
+
+button {
+  margin: 0 4px;
+  padding: 6px;
+  border-radius: 10px;
+  color: @fg;
+  font-family: "Mojangles";
+  font-size: 12px;
+  transition: all 120ms ease;
+}
+
+button:hover {
+  background: alpha(@bgHover, 0.95);
+  border-radius: 10px;
+}
+
+button:active {
+  background: alpha(@bgActive, 0.22);
+}
+
+button:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+image {
+  padding: 0;
+}

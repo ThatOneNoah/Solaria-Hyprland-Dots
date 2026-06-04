@@ -1,0 +1,259 @@
+@import "__HOME__/.config/eww/colors.scss";
+
+* {
+  all: unset;
+  font-family: "Mojangles", "JetBrainsMono Nerd Font", monospace;
+  color: $eww_fg;
+  font-size: 12px;
+}
+
+.desktop-clock {
+  padding: 18px 26px;
+  border: 1px solid rgba($eww_border, 0.72);
+  border-radius: 8px;
+  background: rgba($eww_bg, 0.44);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+}
+
+.desktop-time {
+  font-size: 58px;
+  color: $eww_accent;
+  text-shadow: 0 0 18px rgba($eww_accent, 0.35);
+}
+
+.desktop-date {
+  margin-top: 8px;
+  font-size: 18px;
+  color: $eww_fg;
+}
+
+.hub {
+  padding: 14px;
+  border: 1px solid rgba($eww_border, 0.9);
+  border-radius: 8px;
+  background: rgba($eww_bg, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+}
+
+.hub-shell {
+  min-width: 1220px;
+}
+
+.hover-bridge {
+  min-width: 1220px;
+  min-height: 24px;
+  background: rgba($eww_bg, 0.01);
+}
+
+.hub-header {
+  padding: 2px 4px 12px;
+}
+
+.hub-title {
+  font-size: 20px;
+  color: $eww_accent;
+}
+
+.hub-clock {
+  padding: 6px 10px;
+  border: 1px solid rgba($eww_border, 0.6);
+  border-radius: 8px;
+  background: rgba($eww_bg_3, 0.72);
+  color: $eww_fg;
+}
+
+.hub-grid {
+  min-height: 490px;
+}
+
+.hub-section {
+  border: 1px solid rgba($eww_border, 0.72);
+  border-radius: 8px;
+  background: rgba($eww_bg_2, 0.82);
+  padding: 12px;
+}
+
+.media-card {
+  min-width: 980px;
+  margin-right: 12px;
+}
+
+.coverwrap {
+  min-width: 380px;
+  min-height: 380px;
+  border: 1px solid rgba($eww_accent, 0.7);
+  border-radius: 8px;
+  background: rgba($eww_bg_3, 0.7);
+}
+
+.cover {
+  min-width: 380px;
+  min-height: 380px;
+  border-radius: 8px;
+}
+
+.coverfallback {
+  min-width: 380px;
+  min-height: 380px;
+  color: rgba($eww_accent, 0.62);
+  font-size: 72px;
+}
+
+.media-main {
+  margin-left: 28px;
+  min-width: 520px;
+}
+
+.section-kicker {
+  color: $eww_fg_muted;
+  font-size: 10px;
+}
+
+.media-title {
+  margin-top: 6px;
+  font-size: 18px;
+  color: $eww_fg;
+}
+
+.media-artist {
+  margin-top: 4px;
+  color: $eww_fg_muted;
+}
+
+.seekrow {
+  margin-top: 14px;
+}
+
+.seek {
+  min-width: 390px;
+  margin-right: 10px;
+}
+
+.media-time {
+  color: $eww_fg_muted;
+  font-size: 10px;
+}
+
+.controls {
+  margin-top: 12px;
+}
+
+.control-btn,
+.control-icon {
+  font-family: "JetBrainsMono Nerd Font";
+}
+
+.control-btn {
+  min-width: 34px;
+  min-height: 30px;
+  margin-right: 8px;
+  border: 1px solid rgba($eww_border, 0.72);
+  border-radius: 8px;
+  background: rgba($eww_bg_3, 0.62);
+  color: $eww_fg;
+  font-size: 17px;
+  transition: 160ms ease;
+}
+
+.control-btn:hover {
+  border-color: $eww_accent;
+  background: rgba($eww_accent_soft, 0.72);
+  color: $eww_accent;
+}
+
+.control-main {
+  min-width: 42px;
+  color: $eww_accent;
+}
+
+.control-icon {
+  font-size: 16px;
+  color: inherit;
+}
+
+.hub-side {
+  min-width: 244px;
+}
+
+.weather-card {
+  margin-bottom: 12px;
+}
+
+.weather-icon {
+  min-width: 68px;
+  font-size: 42px;
+  color: $eww_accent;
+}
+
+.weather-temp {
+  font-size: 26px;
+  color: $eww_fg;
+}
+
+.weather-desc {
+  color: $eww_fg_muted;
+}
+
+.zip-row {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba($eww_border, 0.5);
+}
+
+.zip-label {
+  margin-right: 8px;
+  color: $eww_fg_muted;
+}
+
+.zip-input {
+  min-width: 126px;
+  padding: 6px 8px;
+  border: 1px solid rgba($eww_border, 0.8);
+  border-radius: 8px;
+  background: rgba($eww_bg, 0.55);
+}
+
+.profile-name {
+  margin-top: 6px;
+  font-size: 20px;
+  color: $eww_accent;
+}
+
+.profile-info {
+  margin-top: 8px;
+  color: $eww_fg;
+}
+
+.hub-bottom {
+  margin-top: 12px;
+}
+
+.hub-calendar {
+  padding: 10px;
+  border: 1px solid rgba($eww_border, 0.72);
+  border-radius: 8px;
+  background: rgba($eww_bg_2, 0.82);
+  color: $eww_fg;
+}
+
+.hint-panel {
+  margin-left: 12px;
+  min-width: 340px;
+  min-height: 148px;
+  padding: 12px 150px 12px 12px;
+  border: 1px solid rgba($eww_border, 0.72);
+  border-radius: 8px;
+  background: rgba($eww_bg_2, 0.82);
+  background-image: url("__HOME__/.config/eww/mii-no-bg-124.png");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+}
+
+.hint-copy {
+  min-width: 188px;
+}
+
+.hint-line {
+  margin-top: 8px;
+  color: $eww_fg_muted;
+}

@@ -1,0 +1,15 @@
+/* cordial-name: Graphite */
+:root {
+  --cordial-theme: graphite;
+  --background: #0a0b0d;
+  --surface: #15171a;
+  --surface-raised: #20242a;
+  --surface-hover: #2e333b;
+  --border: #414851;
+  --text: #f2f4f3;
+  --muted: #a0a8ad;
+  --accent: #9fd8cb;
+  --accent-strong: #f08a7a;
+  --accent-soft: #e9c46a;
+  --shadow: rgba(0, 0, 0, 0.42);
+}

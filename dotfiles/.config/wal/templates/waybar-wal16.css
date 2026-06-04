@@ -1,0 +1,8 @@
+/* Waybar colors from pywal16 */
+
+@define-color wal_bar_bg   {background.rgba};
+@define-color wal_border   {color4.rgba};
+@define-color wal_fg       {foreground.rgba};
+@define-color wal_accent   {color5.rgba};
+@define-color wal_urgent   {color1.rgba};
+@define-color wal_dim      {color8.rgba};

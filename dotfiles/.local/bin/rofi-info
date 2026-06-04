@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# One-shot text block; rofi will show it as a single selectable line
+# Use markup for nicer look.
+info() {
+  if command -v fastfetch >/dev/null 2>&1; then
+    fastfetch --logo none --structure "OS;Host;Kernel;Uptime;Packages;Shell;Resolution;WM;Theme;Icons;Terminal;CPU;GPU;Memory" \
+    | sed 's/&/&amp;/g;s/</\&lt;/g;s/>/\&gt;/g'  # escape for pango
+  else
+    {
+      echo "OS: $(grep PRETTY_NAME /etc/os-release | cut -d= -f2- | tr -d '"')"
+      echo "Kernel: $(uname -r)"
+      echo "WM: Hyprland"
+      echo "Shell: $SHELL"
+      echo "CPU: $(lscpu | sed -n 's/Model name:[[:space:]]*//p' | head -n1)"
+      echo "GPU: $(lspci | sed -n 's/.*VGA.*: //p' | head -n1)"
+      echo "Memory: $(free -h | awk '/Mem:/ {print $3\"/\"$2}')"
+    } | sed 's/&/&amp;/g;s/</\&lt;/g;s/>/\&gt;/g'
+  fi
+}
+
+case "${ROFI_RETV:-0}" in
+  0)  printf "<b>System information</b>\n\n%s\n" "$(info)";;
+  1)  exit 0;;
+esac

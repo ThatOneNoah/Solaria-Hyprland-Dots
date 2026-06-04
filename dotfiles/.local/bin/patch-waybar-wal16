@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+FILE="$HOME/.cache/wal/waybar-wal16.css"
+[[ -f "$FILE" ]] || exit 0
+
+python - <<'PY'
+import re, os
+path = os.path.expanduser("~/.cache/wal/waybar-wal16.css")
+text = open(path, "r", encoding="utf-8").read()
+
+m = re.search(r'@define-color\s+wal_bar_bg\s+rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)\s*;', text)
+if not m:
+    raise SystemExit("Could not find wal_bar_bg rgba(...) in waybar-wal16.css")
+
+r,g,b = m.group(1), m.group(2), m.group(3)
+alpha = "0.55"  # <- your desired transparency
+line = f"@define-color wal_bar_bg_t rgba({r},{g},{b},{alpha});"
+
+if re.search(r'@define-color\s+wal_bar_bg_t\s+rgba\([^)]+\)\s*;', text):
+    text = re.sub(r'@define-color\s+wal_bar_bg_t\s+rgba\([^)]+\)\s*;', line, text)
+else:
+    text = re.sub(r'(@define-color\s+wal_bar_bg\s+rgba\([^)]+\)\s*;)', r"\1\n" + line, text, count=1)
+
+open(path, "w", encoding="utf-8").write(text)
+PY

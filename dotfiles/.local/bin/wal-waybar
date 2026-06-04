@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+JSON="$HOME/.cache/wal/colors.json"
+OUT="$HOME/.cache/wal/waybar-wal16.css"
+
+[[ -f "$JSON" ]] || { echo "Missing $JSON (run wal16 first)"; exit 1; }
+
+python - <<'PY'
+import json, os
+
+home = os.path.expanduser("~")
+j = json.load(open(os.path.join(home, ".cache/wal/colors.json"), "r", encoding="utf-8"))
+
+def hex_to_rgba(h, a=1.0):
+    h = h.lstrip("#")
+    r = int(h[0:2], 16); g = int(h[2:4], 16); b = int(h[4:6], 16)
+    return f"rgba({r},{g},{b},{a})"
+
+bg      = j["special"]["background"]
+fg      = j["special"]["foreground"]
+border  = j["colors"]["color4"]
+accent  = j["colors"]["color5"]
+urgent  = j["colors"]["color1"]
+dim     = j["colors"]["color8"]
+
+# Transparency for the bar background:
+bg_t_alpha = 0.55
+
+out = os.path.join(home, ".cache/wal/waybar-wal16.css")
+os.makedirs(os.path.dirname(out), exist_ok=True)
+
+with open(out, "w", encoding="utf-8") as f:
+    f.write("/* Waybar colors from pywal16 (generated) */\n\n")
+    f.write(f"@define-color wal_bar_bg   {hex_to_rgba(bg, 1.0)};\n")
+    f.write(f"@define-color wal_bar_bg_t {hex_to_rgba(bg, bg_t_alpha)};\n")
+    f.write(f"@define-color wal_border   {hex_to_rgba(border, 1.0)};\n")
+    f.write(f"@define-color wal_fg       {hex_to_rgba(fg, 1.0)};\n")
+    f.write(f"@define-color wal_accent   {hex_to_rgba(accent, 1.0)};\n")
+    f.write(f"@define-color wal_urgent   {hex_to_rgba(urgent, 1.0)};\n")
+    f.write(f"@define-color wal_dim      {hex_to_rgba(dim, 1.0)};\n")
+
+print("Wrote", out)
+PY

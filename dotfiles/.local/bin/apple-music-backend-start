@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_URL="https://music.apple.com/us/browse"
+LOG_DIR="${HOME}/.local/state/apple-tui"
+PROFILE_DIR="${HOME}/.local/share/apple-tui-browser"
+mkdir -p "$LOG_DIR" "$PROFILE_DIR"
+
+backend_running() {
+    pgrep -af 'chromium.*--remote-debugging-port=9222' >/dev/null
+}
+
+launch_backend() {
+    nohup chromium \
+        --app="$APP_URL" \
+        --remote-debugging-port=9222 \
+        --user-data-dir="$PROFILE_DIR" \
+        >"$LOG_DIR/chromium.log" 2>&1 &
+    disown
+}
+
+if ! backend_running; then
+    launch_backend
+fi

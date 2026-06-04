@@ -1,0 +1,15 @@
+/* cordial-name: Moss */
+:root {
+  --cordial-theme: moss;
+  --background: #0b0f0d;
+  --surface: #151b18;
+  --surface-raised: #1f2924;
+  --surface-hover: #2c3932;
+  --border: #3b4a41;
+  --text: #f1f5ef;
+  --muted: #9daf9f;
+  --accent: #a8c7a0;
+  --accent-strong: #e98573;
+  --accent-soft: #e8c468;
+  --shadow: rgba(0, 0, 0, 0.38);
+}

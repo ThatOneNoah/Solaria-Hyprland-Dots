@@ -1,0 +1,7 @@
+firefox.desktop
+ghostty.desktop
+steam.desktop
+vencord.desktop
+org.kde.dolphin.desktop
+org.kde.kate.desktop
+yazi-ghostty.desktop

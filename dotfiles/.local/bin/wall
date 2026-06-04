@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+img="$1"
+matugen image "$img" -c "$HOME/.config/matugen/config.toml"

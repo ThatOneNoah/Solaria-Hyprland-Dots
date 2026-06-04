@@ -1,0 +1,65 @@
+/* Fullscreen transparent overlay */
+window {
+    margin: 0;
+    border-radius: 0;
+    background-color: rgba(5, 8, 20, 0.25);  /* full-screen tint */
+}
+
+/* Outer container */
+#outer-box {
+margin: 0;
+padding: 0;
+}
+
+/* Center the grid block */
+#inner-box {
+margin: auto;
+padding: 0;
+spacing: 32px;
+background-color: transparent;
+}
+
+/* 3×2 grid with gaps */
+listview {
+    padding: 0;
+    margin: auto;
+    spacing: 32px;           /* gap between rows/columns */
+}
+
+/* Each tile/button – much smaller, not stretched */
+#entry {
+/* Big side margins so the cards don't fill the whole column width */
+margin: 0 300px;         /* tweak this number to change card width */
+padding: 20px 24px;
+
+border-radius: 24px;
+background-color: rgba(255, 255, 255, 0.98);
+
+font-family: "JetBrainsMono Nerd Font", "JetBrainsMono NFM", monospace;
+font-size: 18px;
+color: #111827;
+text-align: center;
+}
+
+/* Focused/hovered tile */
+#entry:selected {
+background-color: rgba(240, 240, 255, 1.0);
+color: #111827;
+}
+
+/* Kill the search UI completely */
+#input,
+#prompt {
+margin: 0;
+padding: 0;
+min-height: 0;
+max-height: 0;
+border: none;
+background-color: transparent;
+color: transparent;
+}
+
+/* Optional tiny tweak */
+#text {
+margin-left: 0;
+}

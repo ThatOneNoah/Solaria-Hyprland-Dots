@@ -1,0 +1,97 @@
+@import "__HOME__/.config/rofi/colors.rasi"
+
+/* Rasi rules:
+ * - Use @vars from * {}.
+ * - Every property ends with ';'.
+ */
+* {
+  font: "Mojangles 11";
+  text-color: @fg;
+  background-color: transparent;
+}
+
+window {
+  location: center;
+  anchor: center;
+
+  width: 680px;
+  padding: 12px;
+
+  background-color: @bg;
+  border: 2px;
+  border-color: @border;
+  border-radius: 18px;
+}
+
+mainbox {
+  spacing: 10px;
+  children: [ "inputbar", "listview", "mode-switcher" ];
+}
+
+inputbar {
+  background-color: @surface;
+  border: 1px;
+  border-color: @border;
+  border-radius: 12px;
+
+  padding: 8px 10px;
+  spacing: 8px;
+}
+
+prompt { enabled: true; text-color: @accent; }
+
+entry {
+  placeholder: "Search…";
+  placeholder-color: @muted;
+  cursor-color: @accent;
+}
+
+listview {
+  lines: 8;
+  columns: 1;
+  spacing: 6px;
+  fixed-height: true;
+  scrollbar: false;
+}
+
+element {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background-color: transparent;
+}
+
+element selected.normal {
+  background-color: @surface2;
+  border: 1px;
+  border-color: @accent;
+}
+
+element-icon {
+  size: 64px;       /* shows thumbnail preview */
+  border-radius: 10px;
+}
+
+element-text { text-color: @fg; }
+
+mode-switcher {
+  enabled: true;
+  spacing: 8px;
+  padding: 6px 0px 0px 0px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 12px;
+
+  background-color: @surface;
+  border: 1px;
+  border-color: @border;
+
+  text-color: @fg;
+}
+
+button selected.normal {
+  background-color: @surface2;
+  border-color: @accent;
+  text-color: @fg;
+}

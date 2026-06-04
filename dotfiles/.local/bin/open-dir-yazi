@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+dir="${1:-$HOME}"
+dir="${dir#file://}"
+exec ghostty --class=yazi-ghostty -e yazi "$dir"

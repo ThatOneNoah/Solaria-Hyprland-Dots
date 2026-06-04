@@ -1,0 +1,52 @@
+window {
+    /* full-screen dim background */
+    background-color: rgba(5, 8, 20, 0.35);
+}
+
+#outer-box {
+    margin: 0;
+    padding: 0;
+}
+
+#inner-box {
+    margin: auto;
+    padding: 24px;
+    spacing: 24px;
+}
+
+#buttons-box {
+    spacing: 24px;
+}
+
+button {
+    min-width: 220px;
+    min-height: 110px;
+
+    border-radius: 24px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.98);
+
+    font-family: "JetBrainsMono Nerd Font", "JetBrainsMono NFM", sans-serif;
+    font-size: 16px;
+    color: #111827;
+
+    padding: 18px 20px;
+}
+
+button:focus,
+button:hover {
+    background-color: rgba(240, 240, 255, 1.0);
+}
+
+#button-box {
+    spacing: 8px;
+}
+
+image {
+    -gtk-icon-transform: scale(1.6);
+    margin-bottom: 4px;
+}
+
+label {
+    font-weight: 500;
+}

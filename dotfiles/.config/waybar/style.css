@@ -1,0 +1,111 @@
+@import url("__HOME__/.cache/wal/waybar-wal16.css");
+
+/* Global defaults */
+* {
+    font-family: "Mojang", "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+    border: 0;
+    border-radius: 0;
+    color: @wal_fg;
+}
+
+/* Floating, square bar using pywal colors */
+window#waybar {
+    background-color: @wal_bar_bg_t;      /* transparent version from pywal */
+    border: 1px solid @wal_border;        /* outline from pywal */
+    border-radius: 0;                     /* square corners */
+
+    /* floating margins (also set in config.jsonc, but this is fine) */
+    margin: 18px 40px 0px 40px;
+
+    padding: 9px 16px;
+    min-height: 40px;
+}
+
+/* Inner container */
+window#waybar > box {
+    padding: 0px 6px;
+}
+
+/* Space between left/center/right modules */
+.modules-left > * ,
+.modules-center > * ,
+.modules-right > * {
+    margin: 0 12px;
+}
+
+/* Make all modules transparent so the single bar bg shows */
+#workspaces,
+#clock,
+#tray,
+#pulseaudio,
+#custom-power,
+#custom-arch {
+background: transparent;
+}
+
+/* ===== WORKSPACES: dots, no background, closer together ===== */
+
+#workspaces button {
+background: transparent;
+border-radius: 0;
+padding: 2px 6px;
+margin: 0 1px;
+color: @wal_fg;
+border-bottom: 1px solid transparent;
+}
+
+#workspaces button.focused {
+background: transparent;
+color: @wal_accent;
+border-bottom: 2px solid @wal_accent;
+}
+
+#workspaces button.urgent {
+background: transparent;
+color: @wal_urgent;
+border-bottom: 2px solid @wal_urgent;
+}
+
+#workspaces button:hover {
+background: transparent;
+border-bottom: 1px solid @wal_border;
+}
+
+/* ===== ARCH LAUNCHER ===== */
+
+#custom-arch {
+padding: 2px 10px;
+font-size: 15px;
+}
+
+/* ===== CLOCK ===== */
+
+#clock {
+font-weight: 600;
+padding: 2px 10px;
+/* inherits font-size: 14px */
+}
+
+/* ===== VOLUME / SOUND ===== */
+
+#pulseaudio {
+padding: 2px 10px;
+font-size: 12px;         /* slightly smaller so Mojangles doesn’t overlap icon */
+}
+
+#pulseaudio.muted {
+color: @wal_dim;
+}
+
+/* ===== POWER BUTTON ===== */
+
+#custom-power {
+padding: 2px 10px;
+font-size: 14px;
+}
+
+/* Tray icons: a little breathing room */
+#tray > * {
+padding: 0 5px;
+}

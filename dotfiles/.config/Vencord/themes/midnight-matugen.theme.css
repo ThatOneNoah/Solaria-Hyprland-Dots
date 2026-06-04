@@ -1,0 +1,85 @@
+/**
+ * @name midnight-matugen
+ * @description Midnight Discord theme + wallpaper colors from matugen
+ * @author you
+ * @version 1.0.0
+ */
+
+@import url('https://refact0r.github.io/midnight-discord/build/midnight.css');
+
+body {
+    --font: 'figtree';
+    --gap: 12px;
+    --divider-thickness: 4px;
+    --animations: on;
+    --custom-window-controls: on;
+    --window-control-size: 14px;
+    --small-user-panel: off;
+}
+
+:root {
+    --colors: on;
+
+    --text-0: #0f1417;
+    --text-1: #dfe3e7;
+    --text-2: #c0c7cd;
+    --text-3: #8a9297;
+    --text-4: #41484d;
+    --text-5: #8a9297;
+
+    --bg-1: #41484d;
+    --bg-2: #383e42;
+    --bg-3: #0f1417;
+    --bg-4: #0f1417;
+
+    --hover: color-mix(in srgb, #8fcff3 12%, transparent);
+    --active: color-mix(in srgb, #8fcff3 20%, transparent);
+    --active-2: color-mix(in srgb, #8fcff3 30%, transparent);
+
+    --accent-1: #8fcff3;
+    --accent-2: #b5c9d7;
+    --accent-3: #c9c1ea;
+    --accent-4: #b5c9d7;
+    --accent-5: #8fcff3;
+    --accent-new: #ffb4ab;
+
+    --online: #43a25a;
+    --dnd: #ffb4ab;
+    --idle: #ca9654;
+    --streaming: #7a5bd6;
+    --offline: #41484d;
+
+    --border-light: color-mix(in srgb, #8a9297 25%, transparent);
+    --border: color-mix(in srgb, #8a9297 45%, transparent);
+    --button-border: color-mix(in srgb, #dfe3e7 12%, transparent);
+
+    --red-1: #ffe2de;
+    --red-2: #ffb4ab;
+    --red-3: #ff9082;
+    --red-4: #ff7464;
+    --red-5: #ff5945;
+
+    --green-1: #5fc978;
+    --green-2: #43a25a;
+    --green-3: #3b8f4f;
+    --green-4: #327a43;
+    --green-5: #296638;
+
+    --blue-1: #bde3f8;
+    --blue-2: #8fcff3;
+    --blue-3: #6abfef;
+    --blue-4: #4fb3ec;
+    --blue-5: #33a8e9;
+
+    --yellow-1: #e6b86a;
+    --yellow-2: #ca9654;
+    --yellow-3: #b68447;
+    --yellow-4: #9f733d;
+    --yellow-5: #896333;
+
+    --purple-1: #eae7f7;
+    --purple-2: #c9c1ea;
+    --purple-3: #aea3e0;
+    --purple-4: #9b8cd8;
+    --purple-5: #8775d0;
+}

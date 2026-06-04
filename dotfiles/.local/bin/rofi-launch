@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CFG="__HOME__/.config/rofi/config.rasi"
+
+# Arch: `rofi` provides `rofi-wayland`, but keep fallback for portability.
+if command -v rofi >/dev/null 2>&1; then
+  exec rofi -show drun -config "$CFG"
+elif command -v rofi-wayland >/dev/null 2>&1; then
+  exec rofi-wayland -show drun -config "$CFG"
+else
+  printf 'rofi not found in PATH\n' >&2
+  exit 127
+fi

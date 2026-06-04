@@ -1,0 +1,60 @@
+{
+  "layer": "top",
+  "position": "top",
+
+  // Size + floating margins
+  "height": 40,
+  "margin-top": 10,
+  "margin-left": 10,
+  "margin-right": 10,
+  "margin-bottom": 0,
+
+  // Extra spacing between modules (on top of CSS)
+  "spacing": 8,
+
+  "modules-left": ["custom/arch"],
+  "modules-center": ["hyprland/workspaces"],
+  "modules-right": ["pulseaudio", "clock", "custom/power"],
+
+  "custom/arch": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "rofi -show drun"
+  },
+
+  "hyprland/workspaces": {
+    "disable-scroll": false,
+    "all-outputs": true,
+    "sort-by-number": true,
+    "active-only": false,
+    "on-click": "hyprctl dispatch workspace {id}",
+    "format": "{icon}",
+    "format-icons": {
+      "1": "", "2": "", "3": "", "4": "", "5": "",
+      "default": ""
+    },
+    "persistent-workspaces": { "*": [1, 2, 3, 4, 5] }
+  },
+
+"pulseaudio": {
+  "format": "{icon}     {volume}%",   // note the double space
+  "format-muted": "  0%",
+  "scroll-step": 5,
+  "on-click": "pavucontrol",
+  "format-icons": {
+    "default": ["", "", ""]
+  }
+},
+
+
+"clock": {
+  "format": "{:%I:%M %p}",            // 12-hour with leading zero (e.g., 09:07 PM)
+  "tooltip": false
+},
+
+  "custom/power": {
+    "format": "⏻",
+    "tooltip": false,
+    "on-click": "wlogout"
+  }
+}
