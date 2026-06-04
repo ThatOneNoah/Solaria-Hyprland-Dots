@@ -1,4 +1,4 @@
-# Noah's Hyprland Rice
+# SOLORIA ☀️
 
 ![Hyprland rice screenshot](assets/screenshot.png)
 
