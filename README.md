@@ -1,4 +1,4 @@
-# SOLORIA ☀️
+# SOLARIA ☀️
 
 ![Hyprland rice screenshot](assets/screenshot.png)
 
