@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SOLARIA Dot Manager
+Comment=Create, save, and switch Hyprland dotfile profiles
+Exec=__HOME__/.local/bin/solaria-dots gui
+Terminal=false
+Categories=Settings;
+Keywords=hyprland;dotfiles;rice;solaria;

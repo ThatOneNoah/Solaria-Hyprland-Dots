@@ -491,6 +491,26 @@ install_fonts() {
   fi
 }
 
+install_applications() {
+  if [[ ! -d "$DOTFILES_DIR/.local/share/applications" ]]; then
+    return 0
+  fi
+
+  log "Installing desktop launchers."
+  mkdir -p "$HOME/.local/share/applications"
+
+  local source
+  shopt -s nullglob
+  for source in "$DOTFILES_DIR/.local/share/applications"/*.desktop; do
+    install_one "$source" "$HOME/.local/share/applications/$(basename "$source")"
+  done
+  shopt -u nullglob
+
+  if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$HOME/.local/share/applications" >/dev/null 2>&1 || true
+  fi
+}
+
 install_extra_scripts() {
   if [[ ! -d "$REPO_DIR/extras/scripts" ]]; then
     return 0
@@ -527,6 +547,33 @@ copy_wallpapers() {
   if [[ -f "$HOME/Pictures/WALLPAPERS/$DEFAULT_WALLPAPER" ]]; then
     ln -sf "$HOME/Pictures/WALLPAPERS/$DEFAULT_WALLPAPER" "$HOME/.config/hypr/current_wallpaper"
   fi
+}
+
+seed_solaria_profile() {
+  local data_home profile
+  data_home="${XDG_DATA_HOME:-"$HOME/.local/share"}"
+  profile="$data_home/solaria-dots/profiles/solaria"
+
+  if [[ -d "$profile" ]]; then
+    log "Dot profile 'solaria' already exists; leaving it unchanged."
+    return 0
+  fi
+
+  log "Creating built-in dot profile: solaria"
+  mkdir -p "$profile"
+  cp -a "$DOTFILES_DIR" "$profile/dotfiles"
+  if [[ -d "$WALLPAPERS_DIR" ]]; then
+    cp -a "$WALLPAPERS_DIR" "$profile/wallpapers"
+  else
+    mkdir -p "$profile/wallpapers"
+  fi
+
+  cat >"$profile/profile.conf" <<EOF
+name=solaria
+source=repo
+created_at=$(date -Iseconds)
+default_wallpaper=$DEFAULT_WALLPAPER
+EOF
 }
 
 replace_home_placeholders() {
@@ -605,9 +652,11 @@ esac
 install_configs
 install_local_bin
 install_fonts
+install_applications
 install_extra_scripts
 replace_home_placeholders
 copy_wallpapers
+seed_solaria_profile
 fix_permissions
 
 log "Install finished."

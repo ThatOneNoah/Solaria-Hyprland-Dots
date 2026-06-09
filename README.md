@@ -26,6 +26,7 @@ https://www.youtube.com/watch?v=laLx_CHMZrc
 - `dotfiles/.config/` includes Hyprland, Quickshell, Eww, Rofi, Mako, Wlogout, Ghostty, Fuzzel, Waybar, Matugen, GTK/Qt, Kvantum, Cava, Fastfetch, NWG, Cordial, Vencord/Vesktop theme files, and Spicetify files.
 - `dotfiles/.local/bin/` includes the launcher, wallpaper, Matugen, dock reload, and theme helper scripts used by the rice.
 - `dotfiles/.local/share/fonts/` includes the bundled Mojang/Mojangles-style fonts used by the clock and menus.
+- `dotfiles/.local/bin/solaria-dots` includes the profile manager app for creating and switching dot profiles.
 - `wallpapers/` includes the wallpaper set from `~/Pictures/WALLPAPERS`.
 - `assets/screenshot.png` is the rice screenshot.
 
@@ -54,6 +55,27 @@ Useful options:
 ```
 
 Detailed distro notes are in [docs/DISTROS.md](docs/DISTROS.md).
+
+## Dot Profile Manager
+
+The installer adds `SOLARIA Dot Manager`, a small app for creating new dot profiles and switching between them. It also seeds a built-in `solaria` profile so you can switch back to this rice later.
+
+Open it from your app launcher, or run:
+
+```bash
+solaria-dots
+```
+
+Useful commands:
+
+```bash
+solaria-dots save my-rice
+solaria-dots switch solaria
+solaria-dots switch my-rice
+solaria-dots open
+```
+
+Full docs are in [docs/DOT_MANAGER.md](docs/DOT_MANAGER.md).
 
 After installing, log out and start Hyprland again, or run:
 

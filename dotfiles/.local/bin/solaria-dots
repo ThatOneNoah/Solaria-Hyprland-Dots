@@ -1,0 +1,648 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_ID="solaria-dots"
+APP_TITLE="SOLARIA Dot Manager"
+DATA_HOME="${XDG_DATA_HOME:-"$HOME/.local/share"}"
+DATA_DIR="$DATA_HOME/$APP_ID"
+PROFILE_ROOT="$DATA_DIR/profiles"
+CURRENT_FILE="$DATA_DIR/current"
+BACKUP_ROOT="$HOME/.rice-backups/$APP_ID"
+DEFAULT_WALLPAPER="122440215_p0.png"
+
+CONFIG_TARGETS=(
+  Kvantum
+  Vencord
+  cava
+  cordial
+  eww
+  fastfetch
+  fuzzel
+  ghostty
+  gtk-3.0
+  gtk-4.0
+  hypr
+  mako
+  matugen
+  nwg-bar
+  nwg-dock-hyprland
+  qt5ct
+  qt6ct
+  quickshell
+  rofi
+  spicetify
+  vesktop
+  wal
+  waybar
+  wlogout
+  wofi
+)
+
+LOCAL_BIN_TARGETS=(
+  apple-music-backend-start
+  apply-wallpaper-matugen
+  change-wallpaper-direct.sh
+  change-wallpaper-safe.sh
+  ghostty
+  ghostty-shell
+  move_to_empty_ws.sh
+  open-dir-yazi
+  patch-waybar-wal16
+  reload-dock-hypr.sh
+  rofi-info
+  rofi-launch
+  rofi-launcher
+  rofi-wall
+  rofi-wallpapers
+  rofi-wallpapers.sh
+  solaria-dots
+  wal-eww
+  wal-waybar
+  wal16-theme.sh
+  wall
+  wallpaper-apply
+  wallset
+  walltheme-switcher
+)
+
+usage() {
+  cat <<'EOF'
+Usage: solaria-dots <command> [args]
+
+Commands:
+  gui                         Open the menu app.
+  list                        List saved dot profiles.
+  current                     Print the active profile name.
+  new <name>                  Create a blank profile skeleton.
+  save <name> [--force]       Save current installed dots as a profile.
+  seed <name> <repo-dir>      Save a repo's dotfiles/wallpapers as a profile.
+  switch <name> [--no-reload] Switch to a saved profile with backups.
+  delete <name> --force       Delete a saved profile.
+  path [name]                 Print the profile root or one profile path.
+  open [name]                 Open the profile root or one profile path.
+  help                        Show this help text.
+EOF
+}
+
+log() {
+  printf '[solaria-dots] %s\n' "$*"
+}
+
+warn() {
+  printf '[solaria-dots] warning: %s\n' "$*" >&2
+}
+
+die() {
+  printf '[solaria-dots] error: %s\n' "$*" >&2
+  exit 1
+}
+
+ensure_dirs() {
+  mkdir -p "$PROFILE_ROOT" "$BACKUP_ROOT"
+}
+
+valid_name() {
+  [[ "${1:-}" =~ ^[A-Za-z0-9._-]+$ ]]
+}
+
+require_name() {
+  local name="${1:-}"
+  [[ -n "$name" ]] || die "profile name is required"
+  valid_name "$name" || die "use only letters, numbers, dots, underscores, and dashes"
+}
+
+profile_dir() {
+  printf '%s/%s\n' "$PROFILE_ROOT" "$1"
+}
+
+profile_exists() {
+  [[ -d "$(profile_dir "$1")" ]]
+}
+
+write_meta() {
+  local name="$1"
+  local dir="$2"
+  local source="${3:-manual}"
+  mkdir -p "$dir"
+  cat >"$dir/profile.conf" <<EOF
+name=$name
+source=$source
+created_at=$(date -Iseconds)
+default_wallpaper=$DEFAULT_WALLPAPER
+EOF
+}
+
+list_profiles() {
+  ensure_dirs
+  find "$PROFILE_ROOT" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
+}
+
+current_profile() {
+  if [[ -s "$CURRENT_FILE" ]]; then
+    cat "$CURRENT_FILE"
+  else
+    printf 'none\n'
+  fi
+}
+
+copy_if_exists() {
+  local source="$1"
+  local target="$2"
+  if [[ ! -e "$source" && ! -L "$source" ]]; then
+    return 0
+  fi
+  mkdir -p "$(dirname "$target")"
+  cp -a "$source" "$target"
+}
+
+copy_dir_contents_if_exists() {
+  local source="$1"
+  local target="$2"
+  if [[ ! -d "$source" ]]; then
+    return 0
+  fi
+  mkdir -p "$target"
+  cp -a "$source/." "$target/"
+}
+
+backup_target() {
+  local target="$1"
+  local backup="$2"
+  if [[ ! -e "$target" && ! -L "$target" ]]; then
+    return 0
+  fi
+
+  local rel="${target#$HOME/}"
+  local backup_target="$backup/$rel"
+  mkdir -p "$(dirname "$backup_target")"
+  mv "$target" "$backup_target"
+}
+
+replace_placeholders_under() {
+  local root="$1"
+  [[ -e "$root" ]] || return 0
+
+  local placeholder legacy_home
+  placeholder="__""HOME__"
+  legacy_home="/home/""noah"
+
+  local file
+  while IFS= read -r -d '' file; do
+    HOME_PLACEHOLDER="$placeholder" LEGACY_HOME="$legacy_home" HOME_REPL="$HOME" perl -0pi -e 's#\Q$ENV{HOME_PLACEHOLDER}\E#$ENV{HOME_REPL}#g; s#\Q$ENV{LEGACY_HOME}\E#$ENV{HOME_REPL}#g' "$file"
+  done < <(grep -RIlZ -e "$placeholder" -e "$legacy_home" "$root" 2>/dev/null || true)
+}
+
+fix_script_permissions() {
+  find "$HOME/.local/bin" -maxdepth 1 -type f -exec chmod +x {} + 2>/dev/null || true
+  find "$HOME/.config/hypr/scripts" "$HOME/.config/quickshell/scripts" "$HOME/.config/eww/scripts" \
+    -type f -exec chmod +x {} + 2>/dev/null || true
+}
+
+new_profile() {
+  local name="$1"
+  require_name "$name"
+  ensure_dirs
+
+  local dir
+  dir="$(profile_dir "$name")"
+  [[ ! -e "$dir" ]] || die "profile '$name' already exists"
+
+  mkdir -p "$dir/dotfiles/.config" "$dir/dotfiles/.local/bin" "$dir/dotfiles/.local/share" "$dir/wallpapers"
+  write_meta "$name" "$dir" "blank"
+  cat >"$dir/README.md" <<EOF
+# $name
+
+Put dotfiles in:
+
+- dotfiles/.config/
+- dotfiles/.local/bin/
+- dotfiles/.local/share/
+
+Put wallpapers in:
+
+- wallpapers/
+EOF
+  log "created blank profile: $dir"
+}
+
+save_current() {
+  local name="$1"
+  local force="${2:-0}"
+  require_name "$name"
+  ensure_dirs
+
+  local dir
+  dir="$(profile_dir "$name")"
+  if [[ -e "$dir" && "$force" != "1" ]]; then
+    die "profile '$name' already exists; pass --force to overwrite"
+  fi
+
+  rm -rf "$dir"
+  mkdir -p "$dir/dotfiles/.config" "$dir/dotfiles/.local/bin" "$dir/dotfiles/.local/share" "$dir/wallpapers"
+
+  local item
+  for item in "${CONFIG_TARGETS[@]}"; do
+    copy_if_exists "$HOME/.config/$item" "$dir/dotfiles/.config/$item"
+  done
+
+  for item in "${LOCAL_BIN_TARGETS[@]}"; do
+    copy_if_exists "$HOME/.local/bin/$item" "$dir/dotfiles/.local/bin/$item"
+  done
+
+  copy_if_exists "$HOME/.local/share/fonts" "$dir/dotfiles/.local/share/fonts"
+  copy_if_exists "$HOME/.local/share/applications/solaria-dot-manager.desktop" "$dir/dotfiles/.local/share/applications/solaria-dot-manager.desktop"
+  copy_if_exists "$HOME/scripts" "$dir/dotfiles/scripts"
+  copy_dir_contents_if_exists "$HOME/Pictures/WALLPAPERS" "$dir/wallpapers"
+
+  write_meta "$name" "$dir" "current-system"
+  log "saved current dots as profile '$name'"
+}
+
+seed_profile() {
+  local name="$1"
+  local repo="${2:-}"
+  require_name "$name"
+  [[ -n "$repo" ]] || die "repo directory is required"
+  [[ -d "$repo/dotfiles" ]] || die "$repo does not contain dotfiles/"
+
+  ensure_dirs
+  local dir
+  dir="$(profile_dir "$name")"
+  if [[ -e "$dir" ]]; then
+    log "profile '$name' already exists; leaving it unchanged"
+    return 0
+  fi
+
+  mkdir -p "$dir"
+  cp -a "$repo/dotfiles" "$dir/dotfiles"
+  if [[ -d "$repo/wallpapers" ]]; then
+    cp -a "$repo/wallpapers" "$dir/wallpapers"
+  else
+    mkdir -p "$dir/wallpapers"
+  fi
+  write_meta "$name" "$dir" "repo"
+  log "seeded profile '$name' from $repo"
+}
+
+apply_dotfiles_dir() {
+  local source_root="$1"
+  local backup="$2"
+
+  local source target item
+  if [[ -d "$source_root/.config" ]]; then
+    shopt -s nullglob
+    for source in "$source_root/.config"/*; do
+      item="$(basename "$source")"
+      target="$HOME/.config/$item"
+      backup_target "$target" "$backup"
+      mkdir -p "$HOME/.config"
+      cp -a "$source" "$target"
+      replace_placeholders_under "$target"
+    done
+    shopt -u nullglob
+  fi
+
+  if [[ -d "$source_root/.local/bin" ]]; then
+    mkdir -p "$HOME/.local/bin"
+    shopt -s nullglob
+    for source in "$source_root/.local/bin"/*; do
+      item="$(basename "$source")"
+      target="$HOME/.local/bin/$item"
+      backup_target "$target" "$backup"
+      cp -a "$source" "$target"
+      replace_placeholders_under "$target"
+    done
+    shopt -u nullglob
+  fi
+
+  if [[ -d "$source_root/.local/share" ]]; then
+    mkdir -p "$HOME/.local/share"
+    shopt -s nullglob
+    for source in "$source_root/.local/share"/*; do
+      item="$(basename "$source")"
+      target="$HOME/.local/share/$item"
+      if [[ "$item" == "applications" && -d "$source" ]]; then
+        mkdir -p "$target"
+        local app_source app_target app_name
+        for app_source in "$source"/*; do
+          app_name="$(basename "$app_source")"
+          app_target="$target/$app_name"
+          backup_target "$app_target" "$backup"
+          cp -a "$app_source" "$app_target"
+          replace_placeholders_under "$app_target"
+        done
+      else
+        backup_target "$target" "$backup"
+        cp -a "$source" "$target"
+        replace_placeholders_under "$target"
+      fi
+    done
+    shopt -u nullglob
+  fi
+
+  if [[ -d "$source_root/scripts" ]]; then
+    target="$HOME/scripts"
+    backup_target "$target" "$backup"
+    cp -a "$source_root/scripts" "$target"
+    replace_placeholders_under "$target"
+  fi
+}
+
+profile_default_wallpaper() {
+  local dir="$1"
+  local value="$DEFAULT_WALLPAPER"
+  if [[ -f "$dir/profile.conf" ]]; then
+    value="$(sed -n 's/^default_wallpaper=//p' "$dir/profile.conf" | head -n1)"
+  fi
+  printf '%s\n' "${value:-$DEFAULT_WALLPAPER}"
+}
+
+apply_wallpapers() {
+  local dir="$1"
+  [[ -d "$dir/wallpapers" ]] || return 0
+
+  mkdir -p "$HOME/Pictures/WALLPAPERS"
+  cp -an "$dir/wallpapers/." "$HOME/Pictures/WALLPAPERS/" 2>/dev/null || true
+
+  local wall
+  wall="$(profile_default_wallpaper "$dir")"
+  if [[ -f "$HOME/Pictures/WALLPAPERS/$wall" ]]; then
+    mkdir -p "$HOME/.config/hypr"
+    ln -sf "$HOME/Pictures/WALLPAPERS/$wall" "$HOME/.config/hypr/current_wallpaper"
+  fi
+}
+
+reload_session() {
+  if command -v hyprctl >/dev/null 2>&1; then
+    hyprctl reload >/dev/null 2>&1 || true
+  fi
+
+  if command -v eww >/dev/null 2>&1; then
+    eww reload >/dev/null 2>&1 || true
+  fi
+
+  if command -v makoctl >/dev/null 2>&1; then
+    makoctl reload >/dev/null 2>&1 || true
+  fi
+}
+
+switch_profile() {
+  local name="$1"
+  local do_reload="${2:-1}"
+  require_name "$name"
+  profile_exists "$name" || die "profile '$name' does not exist"
+
+  local dir backup
+  dir="$(profile_dir "$name")"
+  backup="$BACKUP_ROOT/$(date +%Y%m%d-%H%M%S)-$name"
+  mkdir -p "$backup"
+
+  apply_dotfiles_dir "$dir/dotfiles" "$backup"
+  apply_wallpapers "$dir"
+  fix_script_permissions
+  mkdir -p "$DATA_DIR"
+  printf '%s\n' "$name" >"$CURRENT_FILE"
+
+  if [[ "$do_reload" == "1" ]]; then
+    reload_session
+  fi
+
+  log "switched to '$name'"
+  log "backup saved to $backup"
+}
+
+delete_profile() {
+  local name="$1"
+  local force="${2:-0}"
+  require_name "$name"
+  profile_exists "$name" || die "profile '$name' does not exist"
+  [[ "$force" == "1" ]] || die "delete requires --force"
+
+  rm -rf "$(profile_dir "$name")"
+  if [[ -s "$CURRENT_FILE" && "$(cat "$CURRENT_FILE")" == "$name" ]]; then
+    rm -f "$CURRENT_FILE"
+  fi
+  log "deleted profile '$name'"
+}
+
+open_path() {
+  local path="$1"
+  if command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$path" >/dev/null 2>&1 &
+  elif command -v dolphin >/dev/null 2>&1; then
+    dolphin "$path" >/dev/null 2>&1 &
+  else
+    printf '%s\n' "$path"
+  fi
+}
+
+menu_pick() {
+  local prompt="$1"
+  if command -v rofi >/dev/null 2>&1 && [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    rofi -dmenu -i -p "$prompt"
+  elif command -v wofi >/dev/null 2>&1 && [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    wofi --dmenu --prompt "$prompt"
+  elif command -v fuzzel >/dev/null 2>&1 && [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    fuzzel --dmenu --prompt "$prompt"
+  else
+    local choices=()
+    local choice index
+    mapfile -t choices
+    if [[ "${#choices[@]}" -eq 0 ]]; then
+      return 0
+    fi
+
+    if [[ -r /dev/tty && -w /dev/tty ]]; then
+      printf '%s\n' "$prompt" > /dev/tty
+      for index in "${!choices[@]}"; do
+        printf '  %d) %s\n' "$((index + 1))" "${choices[$index]}" > /dev/tty
+      done
+      read -r -p 'Choose: ' choice < /dev/tty
+      if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#choices[@]} )); then
+        printf '%s\n' "${choices[$((choice - 1))]}"
+      fi
+    else
+      printf '%s\n' "${choices[0]}"
+    fi
+  fi
+}
+
+menu_input() {
+  local prompt="$1"
+  if command -v rofi >/dev/null 2>&1 && [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    printf '\n' | rofi -dmenu -p "$prompt"
+  elif command -v wofi >/dev/null 2>&1 && [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    printf '\n' | wofi --dmenu --prompt "$prompt"
+  elif command -v fuzzel >/dev/null 2>&1 && [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    printf '\n' | fuzzel --dmenu --prompt "$prompt"
+  else
+    local reply=""
+    if [[ -r /dev/tty && -w /dev/tty ]]; then
+      read -r -p "$prompt: " reply < /dev/tty
+    fi
+    printf '%s\n' "$reply"
+  fi
+}
+
+notify_user() {
+  local title="$1"
+  local body="$2"
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send "$title" "$body" >/dev/null 2>&1 || true
+  fi
+}
+
+choose_profile() {
+  local profiles
+  profiles="$(list_profiles)"
+  [[ -n "$profiles" ]] || die "no profiles exist yet"
+  printf '%s\n' "$profiles" | menu_pick "Profile"
+}
+
+gui() {
+  ensure_dirs
+  local action name confirm
+  action="$(printf '%s\n' \
+    "Switch profile" \
+    "Save current as profile" \
+    "Create blank profile" \
+    "Open profile folder" \
+    "Open profiles directory" \
+    "Delete profile" \
+    "List profiles" \
+    "Quit" | menu_pick "$APP_TITLE")"
+
+  case "$action" in
+    "Switch profile")
+      name="$(choose_profile)"
+      [[ -n "$name" ]] || exit 0
+      switch_profile "$name"
+      notify_user "$APP_TITLE" "Switched to $name"
+      ;;
+    "Save current as profile")
+      name="$(menu_input "Profile name")"
+      [[ -n "$name" ]] || exit 0
+      save_current "$name"
+      notify_user "$APP_TITLE" "Saved profile $name"
+      ;;
+    "Create blank profile")
+      name="$(menu_input "Profile name")"
+      [[ -n "$name" ]] || exit 0
+      new_profile "$name"
+      open_path "$(profile_dir "$name")"
+      ;;
+    "Open profile folder")
+      name="$(choose_profile)"
+      [[ -n "$name" ]] || exit 0
+      open_path "$(profile_dir "$name")"
+      ;;
+    "Open profiles directory")
+      open_path "$PROFILE_ROOT"
+      ;;
+    "Delete profile")
+      name="$(choose_profile)"
+      [[ -n "$name" ]] || exit 0
+      confirm="$(menu_input "Type DELETE")"
+      [[ "$confirm" == "DELETE" ]] || exit 0
+      delete_profile "$name" "1"
+      notify_user "$APP_TITLE" "Deleted profile $name"
+      ;;
+    "List profiles")
+      list_profiles
+      ;;
+    "Quit"|"")
+      exit 0
+      ;;
+    *)
+      die "unknown action: $action"
+      ;;
+  esac
+}
+
+main() {
+  local cmd="${1:-gui}"
+  shift || true
+
+  case "$cmd" in
+    gui|menu)
+      gui
+      ;;
+    list)
+      list_profiles
+      ;;
+    current)
+      current_profile
+      ;;
+    new)
+      new_profile "${1:-}"
+      ;;
+    save)
+      local name="${1:-}"
+      local force="0"
+      shift || true
+      while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+          --force) force="1" ;;
+          *) die "unknown option: $1" ;;
+        esac
+        shift
+      done
+      save_current "$name" "$force"
+      ;;
+    seed)
+      seed_profile "${1:-}" "${2:-}"
+      ;;
+    switch)
+      local name="${1:-}"
+      local do_reload="1"
+      shift || true
+      while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+          --no-reload) do_reload="0" ;;
+          *) die "unknown option: $1" ;;
+        esac
+        shift
+      done
+      switch_profile "$name" "$do_reload"
+      ;;
+    delete)
+      local name="${1:-}"
+      local force="0"
+      shift || true
+      while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+          --force) force="1" ;;
+          *) die "unknown option: $1" ;;
+        esac
+        shift
+      done
+      delete_profile "$name" "$force"
+      ;;
+    path)
+      ensure_dirs
+      if [[ -n "${1:-}" ]]; then
+        require_name "$1"
+        printf '%s\n' "$(profile_dir "$1")"
+      else
+        printf '%s\n' "$PROFILE_ROOT"
+      fi
+      ;;
+    open)
+      ensure_dirs
+      if [[ -n "${1:-}" ]]; then
+        require_name "$1"
+        open_path "$(profile_dir "$1")"
+      else
+        open_path "$PROFILE_ROOT"
+      fi
+      ;;
+    help|-h|--help)
+      usage
+      ;;
+    *)
+      die "unknown command: $cmd"
+      ;;
+  esac
+}
+
+main "$@"
